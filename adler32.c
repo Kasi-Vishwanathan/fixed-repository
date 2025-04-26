@@ -58,7 +58,7 @@
 #endif
 
 /* ========================================================================= */
-unsigned long ZEXPORT adler32(unsigned long adler, const unsigned char *buf, uInt len) {
+uLong ZEXPORT adler32(uLong adler, const Bytef *buf, uInt len) {
     unsigned long sum2;
     unsigned n;
 
@@ -125,7 +125,7 @@ unsigned long ZEXPORT adler32(unsigned long adler, const unsigned char *buf, uIn
 }
 
 /* ========================================================================= */
-local uLong adler32_combine_(uLong adler1, uLong adler2, z_off64_t len2) {
+uLong ZEXPORT adler32_combine(uLong adler1, uLong adler2, z_off_t len2) {
     unsigned long sum1;
     unsigned long sum2;
     unsigned rem;
