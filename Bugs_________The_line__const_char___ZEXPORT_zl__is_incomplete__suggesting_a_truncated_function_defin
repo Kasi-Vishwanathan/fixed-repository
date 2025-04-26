@@ -1,3 +1,0 @@
-const char * ZEXPORT zlibVersion(void) {
-    return ZLIB_VERSION;
-}
