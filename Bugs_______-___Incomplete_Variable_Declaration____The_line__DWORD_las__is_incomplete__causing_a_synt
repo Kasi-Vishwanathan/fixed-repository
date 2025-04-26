@@ -1,0 +1,33 @@
+/* gzlib.c -- zlib functions common to reading and writing gzip files
+ * Copyright (C) 2004-2024 Mark Adler
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
+
+#include "gzguts.h"
+
+#if defined(__DJGPP__)
+#  define LSEEK llseek
+#elif defined(_WIN32) && !defined(__BORLANDC__) && !defined(UNDER_CE)
+#  define LSEEK _lseeki64
+#elif defined(_LARGEFILE64_SOURCE) && _LFS64_LARGEFILE-0
+#  define LSEEK lseek64
+#else
+#  define LSEEK lseek
+#endif
+
+#if defined UNDER_CE
+
+/* Map the Windows error number in ERROR to a locale-dependent error message
+   string and return a pointer to it.  Typically, the values for ERROR come
+   from GetLastError.
+
+   The string pointed to shall not be modified by the application, but may be
+   overwritten by a subsequent call to gz_strwinerror
+
+   The gz_strwinerror function does not change the current setting of
+   GetLastError. */
+char ZLIB_INTERNAL *gz_strwinerror(DWORD error) {
+    static char buf[1024];
+
+    wchar_t *msgbuf;
+    DWORD last_error = GetLastError();  // Fixed incomplete declaration
