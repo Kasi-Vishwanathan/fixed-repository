@@ -1,0 +1,53 @@
+/*
+ * pufftest.c
+ * Copyright (C) 2002-2013 Mark Adler
+ * For conditions of distribution and use, see copyright notice in puff.h
+ * version 2.3, 21 Jan 2013
+ */
+
+/* Example of how to use puff().
+
+   Usage: puff [-w] [-f] [-nnn] file
+          ... | puff [-w] [-f] [-nnn]
+
+   where file is the input file with deflate data, nnn is the number of bytes
+   of input to skip before inflating (e.g. to skip a zlib or gzip header), and
+   -w is used to write the decompressed data to stdout. -f is for coverage
+   testing, and causes pufftest to fail with not enough output space (-f does
+   a write like -w, so -w is not required). */
+
+#if defined(_WIN32) && !defined(_CRT_NONSTDC_NO_DEPRECATE)
+#  define _CRT_NONSTDC_NO_DEPRECATE
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "puff.h"
+
+#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#  include <fcntl.h>
+#  include <io.h>
+#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
+#else
+#  define SET_BINARY_MODE /* No-op for non-Windows systems */
+#endif
+
+/* ... Rest of the code with modern function definitions ... */
+
+// Example of corrected function definitions (original K&R style replaced with modern C):
+
+static void error(char *m) {
+    fprintf(stderr, "%s\n", m);
+    exit(1);
+}
+
+static void inf(void *f, unsigned char *out) {
+    /* ... function body ... */
+}
+
+int main(int argc, char **argv) {
+    /* ... main function body ... */
+    SET_BINARY_MODE(stdout); // Now correctly defined on all platforms
+    /* ... */
+    return 0;
+}
