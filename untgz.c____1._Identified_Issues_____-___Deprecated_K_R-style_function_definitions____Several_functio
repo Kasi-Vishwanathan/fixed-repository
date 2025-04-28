@@ -1,0 +1,8 @@
+void error(s)
+    char *s;
+{ ... }
+
+int main(argc, argv)
+    int argc;
+    char *argv[];
+{ ... }
