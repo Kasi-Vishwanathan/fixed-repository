@@ -18,11 +18,12 @@ int main() {
     std::cout << x << std::endl << y << std::endl << z << std::endl;
 
     out.open("temp.gz"); // try ascii output; zcat temp.gz to see the results
-    out << std::setw(50) << std::setfill('#') << std::setprecision(20)
-        << x << std::endl << y << std::endl << z << std::endl;
+    out << std::setw(50) << std::setfill('#') << std::setprecision(20) << x << std::endl 
+        << y << std::endl << z << std::endl;
     out << z << std::endl << y << std::endl << x << std::endl;
     out << 1.1234567890123456789 << std::endl;
 
-    delete[] x; delete[] y;
+    delete[] x; 
+    delete[] y;
     return 0;
 }
