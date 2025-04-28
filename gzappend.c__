@@ -1,0 +1,29 @@
+/* gzappend -- command to append to a gzip file
+   ... [rest of the header comment unchanged] ... */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <fcntl.h>
+#include "zlib.h"
+
+#define CHUNK 32768
+
+/* ... [rest of the code] ... */
+
+static void gz_compress(FILE *inf, gzFile outz, char *name) {
+    /* ... function body unchanged ... */
+}
+
+static void gz_append(FILE *f, gzFile out, char *name) {
+    /* ... function body unchanged ... */
+}
+
+static void error(char *msg) {
+    /* ... function body unchanged ... */
+}
+
+int main(int argc, char *argv[]) {
+    /* ... function body unchanged ... */
+}
