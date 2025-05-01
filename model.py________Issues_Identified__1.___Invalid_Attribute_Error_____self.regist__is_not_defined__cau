@@ -1,0 +1,43 @@
+# Copyright (c) Microsoft Corporation. 
+# Licensed under the MIT license.
+
+import torch
+import torch.nn as nn
+from torch.autograd import Variable  # Remove if Variable is unused elsewhere
+import copy
+
+
+class Seq2Seq(nn.Module):
+    """
+    Build Sequence-to-Sequence model.
+
+    Parameters:
+        * `encoder`: Encoder of seq2seq model. e.g. RoBERTa.
+        * `decoder`: Decoder of seq2seq model. e.g. Transformer.
+        * `config`: Configuration of the encoder model.
+        * `beam_size`: Beam size for beam search.
+        * `max_length`: Max length of target for beam search.
+        * `sos_id`: Start-of-sequence token ID for beam search.
+        * `eos_id`: End-of-sequence token ID for beam search.
+    """
+
+    def __init__(
+        self,
+        encoder,
+        decoder,
+        config,
+        tokenizer,
+        beam_size=None,
+        max_length=None,
+        sos_id=None,
+        eos_id=None,
+    ):
+        super().__init__()
+        self.encoder = encoder
+        self.decoder = decoder
+        self.config = config
+        self.tokenizer = tokenizer
+        self.beam_size = beam_size
+        self.max_length = max_length
+        self.sos_id = sos_id
+        self.eos_id = eos_id
