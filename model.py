@@ -1,36 +1,21 @@
-# Copyright (c) Microsoft Corporation. 
-# Licensed under the MIT license.
-
-import torch
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 import torch.nn as nn
-from torch import Tensor
+import torch
 
 
-class Seq2Seq(nn.Module):
-    """
-    Build Sequence-to-Sequence model.
-
-    Args:
-        encoder: Encoder of seq2seq model (e.g. RoBERTa)
-        decoder: Decoder of seq2seq model (e.g. Transformer)
-        config: Configuration of encoder model
-        beam_size: Beam size for beam search (optional)
-        max_length: Max length of target for beam search (optional)
-        sos_id: Start symbol ID for beam search (optional)
-        eos_id: End symbol ID for beam search (optional)
-    """
-    def __init__(self, encoder, decoder, config, beam_size=None, max_length=None, sos_id=None, eos_id=None):
+class Model(nn.Module):
+    def __init__(self, encoder):
         super().__init__()
         self.encoder = encoder
-        self.decoder = decoder
-        self.config = config
-        self.beam_size = beam_size
-        self.max_length = max_length
-        self.sos_id = sos_id
-        self.eos_id = eos_id
 
-        if max_length is not None:
-            self.register_buffer(
-                "bias",
-                torch.tril(torch.ones((max_length, max_length), dtype=torch.uint8))
-            )
+    def forward(self, code_inputs=None, attn_mask=None, position_idx=None, nl_inputs=None):
+        if code_inputs is not None:
+            nodes_mask = position_idx.eq(0)
+            token_mask = position_idx.ge(2)
+            inputs_embeddings = self.encoder.embeddings.word_embeddings(code_inputs)
+            nodes_to_token_mask = nodes_mask[:, :, None] & token_mask[:, None, :] & attn_mask
+            nodes_to_token_mask = nodes_to_token_mask / (nodes_to_token_mask.sum(-1) + 1e-10)[:, :, None]
+            avg_embeddings = torch.einsum("abc,acd->abd", nodes_to_token_mask, inputs_embeddings)
+            inputs_embeddings = inputs_embeddings * (~nodes_mask)[:, :, None] + avg_embeddings * nodes_mask[:, :, None]
+            return self.encoder(inputs_embeds=inputs_embeddings)
