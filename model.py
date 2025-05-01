@@ -1,33 +1,32 @@
-# Copyright (c) Microsoft Corporation. 
-# Licensed under the MIT license.
-
-import torch
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 import torch.nn as nn
-import copy
+import torch
 
-class Seq2Seq(nn.Module):
-    """
-        Build Seqence-to-Sequence.
-        
-        Parameters:
-        * `encoder`- encoder of seq2seq model. e.g. roberta
-        * `decoder`- decoder of seq2seq model. e.g. transformer
-        * `config`- configuration of encoder model. 
-        * `beam_size`- beam size for beam search. 
-        * `max_length`- max length of target for beam search. 
-        * `sos_id`- start of symbol ids in target for beam search.
-        * `eos_id`- end of symbol ids in target for beam search. 
-    """
-    def __init__(self, encoder, decoder, config, beam_size=None, max_length=None, sos_id=None, eos_id=None):
-        super().__init__()
+class Model(nn.Module):
+    def __init__(self, encoder):
+        super().__init__()  # Modern super() syntax
         self.encoder = encoder
-        self.decoder = decoder
-        self.config = config
-        self.beam_size = beam_size
-        self.max_length = max_length
-        self.sos_id = sos_id
-        self.eos_id = eos_id
-        
-        self.register_buffer(
-            "bias", torch.tril(torch.ones((max_length, max_length)))
-        )
+
+    def forward(self, code_inputs=None, nl_inputs=None, cls=False):
+        # Validate input
+        if code_inputs is not None:
+            inputs = code_inputs
+        elif nl_inputs is not None:
+            inputs = nl_inputs
+        else:
+            raise ValueError("Either code_inputs or nl_inputs must be provided")
+
+        # Common processing for both paths
+        attention_mask = inputs.ne(1)
+        hidden_states = self.encoder(inputs, attention_mask=attention_mask)[0]
+
+        if cls:  # Use CLS token when requested
+            pooled = hidden_states[:, 0]
+        else:    # Mean pooling implementation
+            masked_outputs = hidden_states * attention_mask.unsqueeze(-1)
+            sum_masked = masked_outputs.sum(dim=1)
+            divisor = attention_mask.sum(dim=1, keepdim=True).clamp(min=1e-9)
+            pooled = sum_masked / divisor
+
+        return torch.nn.functional.normalize(pooled, p=2, dim=1)
