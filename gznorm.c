@@ -19,4 +19,7 @@
 #include <stdlib.h>     // malloc, free
 #include <string.h>     // strerror
 #include <errno.h>      // errno
-#include <stdarg.h>     // va_list, va_start, va_end
+#include <stdarg.h>     // va_list, va_start, etc.
+
+// Additional parts of the original file (not provided in query) would follow
+// with K&R function definitions modernized to ANSI style
