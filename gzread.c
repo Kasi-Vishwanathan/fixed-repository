@@ -1,0 +1,1 @@
+local int gz_load(gz_statep state, unsigned char *buf, unsigned len, unsigned *have)
